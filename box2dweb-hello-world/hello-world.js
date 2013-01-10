@@ -28,12 +28,12 @@ quadradoFixDef.shape.SetAsBox(5,5);
 var quadradoBodyDef = new b2BodyDef;
 quadradoBodyDef.type = b2Body.b2_dynamicBody;
 
-quadradoBodyDef.position.Set(10,10);
+quadradoBodyDef.position.Set(10,40);
 quadradoBodyDef.userData = 'QUADRADO1';
 var quadradoBody1 = world.CreateBody(quadradoBodyDef);
 quadradoBody1.CreateFixture(quadradoFixDef);
 //quadradoBody1.SetPositionAndAngle(new b2Vec2(10,10), RADIAN*49);
-//quadradoBody1.SetLinearVelocity(new b2Vec2( 2, 20 ) );
+quadradoBody1.SetLinearVelocity(new b2Vec2( 0, -20 ) );
 quadradoBody1.SetAngularVelocity(Math.PI*-1.2);
 
 quadradoBodyDef.position.Set(40,10);
@@ -66,7 +66,7 @@ world.SetDebugDraw(debugDraw);
 window.setInterval(update, 1000 / FPS);
 
 function update() {
-    world.Step(1 / FPS, 10, 0);
+    world.Step(1 / FPS, 8, 3);
     world.DrawDebugData();
     world.ClearForces();
 }
