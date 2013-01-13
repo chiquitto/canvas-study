@@ -28,32 +28,45 @@ carroFixDef.shape.SetAsBox(6,3);
 
 var carroBodyDef = new b2BodyDef;
 carroBodyDef.type = b2Body.b2_dynamicBody;
-carroBodyDef.position.Set(13,34);
+carroBodyDef.position.Set(15,34);
 carroBodyDef.userData = 'CARRO';
 
 var carroBody = world.CreateBody(carroBodyDef);
 carroBody.CreateFixture(carroFixDef);
 //carroBody.SetLinearVelocity(new b2Vec2( 0, -20 ) );
 
+// Carroça
+carroFixDef.shape.SetAsBox(3,2);
+
+carroBodyDef.position.Set(3,35);
+carroBodyDef.userData = 'CARROCA';
+var carrocaBody = world.CreateBody(carroBodyDef);
+carrocaBody.CreateFixture(carroFixDef);
+
 // Rodas do carro
 var rodaFixDef = new b2FixtureDef;
 rodaFixDef.density = 5;
-rodaFixDef.friction = 1;
+rodaFixDef.friction = 5;
 rodaFixDef.restitution = .1;
 rodaFixDef.shape = new b2CircleShape(1);
 
 var rodaBodyDef = new b2BodyDef;
 rodaBodyDef.type = b2Body.b2_dynamicBody;
-rodaBodyDef.position.Set(10,37);
+rodaBodyDef.position.Set(12,37);
 rodaBodyDef.userData = 'RODA_E';
 
 var rodaEBody = world.CreateBody(rodaBodyDef);
 rodaEBody.CreateFixture(rodaFixDef);
 
-rodaBodyDef.position.Set(16,37);
+rodaBodyDef.position.Set(18,37);
 rodaBodyDef.userData = 'RODA_D';
 var rodaDBody = world.CreateBody(rodaBodyDef);
 rodaDBody.CreateFixture(rodaFixDef);
+
+// Roda da carroca
+rodaBodyDef.position.Set(3,37);
+var rodaCarrocaBody = world.CreateBody(rodaBodyDef);
+rodaCarrocaBody.CreateFixture(rodaFixDef);
 
 // Junção
 var revoluteJointDef1 = new b2RevoluteJointDef();
@@ -73,6 +86,17 @@ revoluteJointDef1.motorSpeed = 3.0;
 revoluteJointDef1.enableMotor = true;*/
 revoluteJointB = world.CreateJoint(revoluteJointDef2);
 
+revoluteJointDef3 = new b2RevoluteJointDef();
+revoluteJointDef3.Initialize(carrocaBody, rodaCarrocaBody, rodaCarrocaBody.GetWorldCenter());
+revoluteJointC = world.CreateJoint(revoluteJointDef3);
+
+revoluteJointDef4 = new b2RevoluteJointDef();
+revoluteJointDef4.Initialize(carrocaBody, carroBody, carroBody.GetWorldCenter());
+revoluteJointDef4.maxMotorTorque = 2000.0;
+revoluteJointDef4.motorSpeed = 30;
+revoluteJointDef4.enableMotor = true;
+revoluteJointD = world.CreateJoint(revoluteJointDef4);
+
 // Chao
 var chaoBodyDef = new b2BodyDef;
 chaoBodyDef.type = b2Body.b2_staticBody;
@@ -84,6 +108,14 @@ chaoFixDef.shape.SetAsBox(40,1);
 
 chaoBody = world.CreateBody(chaoBodyDef);
 chaoBody.CreateFixture(chaoFixDef);
+
+// Obstaculo
+chaoFixDef.shape.SetAsBox(1,1);
+for(x=0; x<=75; x+=5) {
+    chaoBodyDef.position.Set(x,38.9);
+    obstaculoBody = world.CreateBody(chaoBodyDef);
+    obstaculoBody.CreateFixture(chaoFixDef);
+}
 
 var debugDraw = new b2DebugDraw();
 debugDraw.SetSprite(document.getElementById('box2dcanvas').getContext('2d'));
