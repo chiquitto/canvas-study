@@ -1,5 +1,17 @@
+var Math2 = {
+	calcBallVolume: function(sphereRadius) {
+		return 4/3 * Math.PI * (Math.pow(sphereRadius,3));
+	},
+	
+	calcDensity: function(mass, volume) {
+		return mass / volume;
+	}
+}
+
+
 /**
  * @link http://codingowl.com/readblog.php?blogid=114
+ * @link http://en.wikipedia.org/wiki/Billiard_ball
  */
 
 var b2Vec2 = Box2D.Common.Math.b2Vec2,
@@ -39,13 +51,18 @@ var snooker = {
             snooker.update();
         }, 1000 / this.FPS);
     },
-
-    setupBalls: function() {
+	
+	setupBalls: function() {
+		var ballRadius = 0.02625; // raio em metros
+		var ballMassa = 0.13; // massa em kg
+		
         var ballFixDef = new b2FixtureDef;
-        ballFixDef.density = 5;
+        ballFixDef.density = Math2.calcDensity(ballMassa, Math2.calcBallVolume(ballRadius));
         ballFixDef.friction = 5;
-        ballFixDef.restitution = 0.5;
-        ballFixDef.shape = new b2CircleShape(0.02625 * this.SCALE2 * 3);
+        ballFixDef.restitution = 0.1;
+        ballFixDef.shape = new b2CircleShape(ballRadius * this.SCALE2 * 3);
+		
+		console.log(ballFixDef.density);
 
         // definicao da parede
         var ballBodyDef = new b2BodyDef;
@@ -120,16 +137,21 @@ var snooker = {
     },
     
     setupWhiteBall: function() {
+		var ballRadius = 0.029; // raio em metros
+		var ballMassa = 0.15; // massa em kg
+		
         var whiteballFixDef = new b2FixtureDef;
-        whiteballFixDef.density = 5;
+        whiteballFixDef.density = Math2.calcDensity(ballMassa, Math2.calcBallVolume(ballRadius));
         whiteballFixDef.friction = 5;
-        whiteballFixDef.restitution = 0.5;
-        whiteballFixDef.shape = new b2CircleShape(0.029 * this.SCALE2 * 3);
+        whiteballFixDef.restitution = 0.1;
+        whiteballFixDef.shape = new b2CircleShape(ballRadius * this.SCALE2 * 3);
+		
+		console.log(whiteballFixDef.density);
         
         // definicao da parede
         var whiteballBodyDef = new b2BodyDef;
         whiteballBodyDef.type = b2Body.b2_dynamicBody;
-        whiteballBodyDef.position.Set(1, this.CY);
+        whiteballBodyDef.position.Set(1, this.CY-0.05);
         
         // cima
         whiteballBody = this.world.CreateBody(whiteballBodyDef);
@@ -156,7 +178,7 @@ $(document).ready(function(){
 });
 
 function update() {
-    world.Step(1 / FPS, 8, 3);
+    world.Step(1 / FPS, 100, 100);
     world.DrawDebugData();
     world.ClearForces();
 }
