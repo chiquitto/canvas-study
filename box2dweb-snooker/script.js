@@ -28,6 +28,8 @@ b2DebugDraw = Box2D.Dynamics.b2DebugDraw,
 b2Fixture = Box2D.Dynamics.b2Fixture,
 b2AABB = Box2D.Collision.b2AABB;
 
+Box2D.Common.b2Settings.b2_velocityThreshold=0;
+
 var snooker = {
     SCALE: null,
     FPS: null,
@@ -67,10 +69,18 @@ var snooker = {
         // definicao da parede
         var ballBodyDef = new b2BodyDef;
         ballBodyDef.type = b2Body.b2_dynamicBody;
-        ballBodyDef.position.Set(this.WIDTH-1, this.CY);
-
-        ballBody = this.world.CreateBody(ballBodyDef);
-        ballBody.CreateFixture(ballFixDef);
+		
+        ballBodyDef.position.Set(this.WIDTH-1.1, this.CY);
+        ballBody1 = this.world.CreateBody(ballBodyDef);
+        ballBody1.CreateFixture(ballFixDef);
+		
+		ballBodyDef.position.Set(this.WIDTH-1, this.CY-0.1);
+        ballBody2= this.world.CreateBody(ballBodyDef);
+        ballBody2.CreateFixture(ballFixDef);
+		
+		ballBodyDef.position.Set(this.WIDTH-1, this.CY+0.1);
+        ballBody3= this.world.CreateBody(ballBodyDef);
+        ballBody3.CreateFixture(ballFixDef);
     },
     
     setupConfig: function() {
@@ -176,9 +186,3 @@ var snooker = {
 $(document).ready(function(){
     snooker.init();
 });
-
-function update() {
-    world.Step(1 / FPS, 100, 100);
-    world.DrawDebugData();
-    world.ClearForces();
-}
