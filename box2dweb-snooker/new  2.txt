@@ -1,0 +1,103 @@
+counter++;
+		
+		if ((counter % 1) == 0) {
+			for (b = this.world.GetBodyList() ; b; b = b.GetNext()) {
+				var userData = b.GetUserData();
+				if ((userData == 'WHITE_BALL') || (userData == 'BALL')) {
+					var v = b.GetLinearVelocity();
+					var vx = v.x;
+					var vy = v.y;
+					
+					if ( (vx == 0) && (vy == 0) ) {
+						continue;
+					}
+					
+					if ((counter % 10) == 0) {
+						console.log('vx = ', vx);
+						console.log('vy = ', vy);
+					}
+					
+					vx = Math.abs(vx);
+					vy = Math.abs(vy);
+					if ( (vx < snooker.minVelocity) && (vy < snooker.minVelocity) ) {
+						b.SetLinearVelocity(new b2Vec2(0,0));
+						b.SetAngularVelocity(0);
+						continue;
+					}
+					
+					var p2 = b.GetPosition();
+					var p1 = snooker.oldPositions[userData];
+					
+					var angle = Math2.getAngleDegrees(p1.x, p1.y, p2.x, p2.y);
+					//var inverseAngle = (angle > 0) ? angle - 180 : angle + 180;
+					
+					var rel, forcaX, forcaY;
+					rel = Math.abs(angle) / 90;
+					if (angle < 0) {
+						// angle < -90
+						if (rel > 1) {
+							forcaX = rel - 1;
+							forcaY = 1 - forcaX;
+						}
+						// angle >= -90
+						else {
+							forcaY = rel;
+							forcaX = 1 - forcaY;
+						}
+					}
+					// angle > 0
+					else {
+						// angle > 90
+						if (rel > 1) {
+							forcaX = rel - 1;
+							forcaY = 1 - forcaX;
+						}
+						// angle <= 90
+						else {
+							forcaY = rel;
+							forcaX = 1 - forcaY;
+						}
+					}
+					
+					if ( (angle > 90) || (angle < -90) ) {
+						forcaX *= -1;
+					}
+					if (angle < 0) {
+						forcaY *= -1;
+					}
+					
+					var applyForce = true;
+					/*if (vx < snooker.minVelocity) {
+						forcaX = 0;
+						b.SetLinearVelocity(new b2Vec2(0, vy));
+						applyForce = false;
+						console.log('b.SetLinearVelocity(new b2Vec2(0,vy));');
+					}
+					
+					if (vy < snooker.minVelocity) {
+						forcaY = 0;
+						b.SetLinearVelocity(new b2Vec2(vx, 0));
+						applyForce = false;
+						console.log('b.SetLinearVelocity(new b2Vec2(vx, 0));');
+					}*/
+					
+					if (applyForce) {
+						forcaX = -forcaX * 100;
+						forcaY = -forcaY * 100;
+					}
+					
+					//console.log(forcaX, forcaY, v.x, v.y);
+					//console.log(b.GetMass());
+					
+					b.ApplyForce(new b2Vec2(forcaX, forcaY), b.GetWorldCenter());
+					
+					/*var forcaX = inverseAngle / 360 * 1000; // -0,41666666666666666666666666666667
+					var forcaY = 1000 - forcaX; // -0,58333333333333333333333333333333
+					//console.log(forcaX, forcaY);
+					b.ApplyForce(new b2Vec2(forcaX, forcaY), b.GetWorldCenter());*/
+					// whiteballBody.ApplyForce(new b2Vec2(10, 0), whiteballBody.GetWorldCenter());
+					
+					snooker.oldPositions[userData] = {x:p2.x, y:p2.y};
+				}
+			}
+		}
